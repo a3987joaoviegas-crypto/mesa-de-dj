@@ -1,4 +1,5 @@
-import streamlit as st
+if 'neon_color' not in st.session_state:
+    st.session_state.neon_color = "#00ff00"import streamlit as st
 import streamlit.components.v1 as components
 import time
 
