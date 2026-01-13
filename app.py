@@ -1,190 +1,227 @@
 import streamlit as st
 
-# Configuração de ecrã inteiro sem margens
-st.set_page_config(layout="wide", page_title="Unibody DJ Metal Station")
+# Configuração de layout limpo
+st.set_page_config(layout="wide", page_title="Gemini Ultra-Realistic DJ Console")
 
-# --- O DESIGN DA PLACA DE METAL ÚNICA ---
+# --- CSS DE ENGENHARIA VISUAL (HARDWARE PURO) ---
 st.markdown("""
 <style>
-    /* Fundo da "Sala de Estúdio" */
+    /* Fundo do Estúdio */
     .stApp {
-        background-color: #0a0a0b;
+        background: radial-gradient(circle at center, #1b1b1e 0%, #050505 100%);
     }
 
-    /* A PLACA DE METAL (Hardware Único) */
-    .metal-chassis {
-        background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 50%, #111112 100%);
-        border: 3px solid #3a3a3c;
-        border-radius: 20px;
-        box-shadow: 0 50px 100px rgba(0,0,0,0.9), inset 0 2px 2px rgba(255,255,255,0.1);
+    /* CHASSIS DE METAL INTEGRADO */
+    .dj-system-unibody {
+        background: linear-gradient(145deg, #232326 0%, #131315 100%);
+        border: 2px solid #323236;
+        border-radius: 30px;
+        box-shadow: 
+            0 50px 100px rgba(0,0,0,0.9),
+            inset 0 1px 3px rgba(255,255,255,0.1);
+        padding: 40px;
         margin: 20px auto;
-        padding: 30px;
-        display: flex;
-        gap: 20px;
-        height: 85vh;
         width: 95%;
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
         position: relative;
     }
 
-    /* Textura de Metal Escovado (Overlay) */
-    .metal-chassis::before {
+    /* Brilho de Metal Escovado */
+    .dj-system-unibody::after {
         content: "";
         position: absolute;
         top: 0; left: 0; right: 0; bottom: 0;
-        opacity: 0.05;
+        background: repeating-linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.01) 1%, transparent 2%);
         pointer-events: none;
-        background-image: repeating-linear-gradient(45deg, #fff, #fff 1px, transparent 1px, transparent 2px);
+        border-radius: 30px;
     }
 
-    /* Secção do Navegador Embutida no Metal */
-    .embedded-browser {
-        flex: 1;
-        background: rgba(0, 0, 0, 0.4);
-        border-radius: 12px;
-        border: 1px solid #333;
-        padding: 20px;
-        overflow-y: auto;
-        box-shadow: inset 0 0 20px #000;
-    }
-
-    /* A Secção da Mesa (Decks + Mixer) */
-    .deck-area {
-        flex: 3;
+    /* SEÇÃO SUPERIOR (Displays e Navegação) */
+    .top-panel {
         display: grid;
-        grid-template-columns: 1fr 180px 1fr;
-        gap: 15px;
+        grid-template-columns: 280px 1fr 280px;
+        gap: 20px;
+        height: 250px;
+    }
+
+    /* Ecrãs LCD Realistas */
+    .lcd-screen {
+        background: #000;
+        border: 3px solid #2a2a2e;
+        border-radius: 10px;
+        padding: 15px;
+        box-shadow: inset 0 0 20px rgba(0, 242, 255, 0.15);
+        color: #00f2ff;
+        font-family: 'Courier New', monospace;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-shadow: 0 0 5px #00f2ff;
+    }
+
+    /* SEÇÃO DE PERFORMANCE (Discos e Mixer) */
+    .performance-deck {
+        display: grid;
+        grid-template-columns: 1fr 220px 1fr;
+        gap: 30px;
         align-items: center;
     }
 
-    /* Discos (Jog Wheels) Ultra Realistas */
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    /* JOG WHEEL (O Disco que Gira) */
+    @keyframes spin_deck { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     
-    .jog-wheel {
-        width: 260px;
-        height: 260px;
+    .jog-outer {
+        width: 340px;
+        height: 340px;
         border-radius: 50%;
-        background: radial-gradient(circle, #222 20%, #000 100%);
-        border: 8px solid #2a2a2d;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.8), inset 0 0 10px #000;
-        margin: 20px auto;
+        background: #0a0a0b;
+        border: 10px solid #252528;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.8), inset 0 0 20px #000;
+        margin: auto;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
-        animation: spin 3.5s linear infinite;
     }
 
-    .jog-wheel::after {
-        content: "";
-        position: absolute;
-        width: 100%; height: 100%;
+    .jog-inner-vinyl {
+        width: 90%;
+        height: 90%;
         border-radius: 50%;
-        background: repeating-radial-gradient(circle, transparent 0, transparent 1px, rgba(255,255,255,0.02) 2px);
+        background: repeating-radial-gradient(circle, #111 0, #111 2px, #161618 3px);
+        animation: spin_deck 4s linear infinite;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
-    .jog-center {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        border: 2px solid #00f2ff;
-        box-shadow: 0 0 15px #00f2ff;
-        background: #111;
-    }
-
-    /* Ecrã de Informação */
-    .digital-display {
+    .jog-center-display {
+        width: 80px;
+        height: 80px;
         background: #000;
-        color: #00f2ff;
-        font-family: 'Courier New', Courier, monospace;
-        border: 1px solid #333;
-        padding: 10px;
-        border-radius: 5px;
-        text-align: center;
-        margin-bottom: 15px;
-        box-shadow: inset 0 0 10px rgba(0, 242, 255, 0.2);
+        border: 2px solid #00f2ff;
+        border-radius: 50%;
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.5);
+        z-index: 10;
     }
 
-    /* Mixer Integrado */
-    .integrated-mixer {
-        background: rgba(0,0,0,0.3);
-        border-radius: 8px;
-        height: 100%;
+    /* MIXER VERTICAL */
+    .mixer-strip {
+        background: rgba(0,0,0,0.4);
+        border: 2px solid #2a2a2e;
+        border-radius: 15px;
+        height: 450px;
+        padding: 20px 10px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        padding: 20px 0;
-        border: 1px solid #3a3a3c;
+        justify-content: space-between;
+        box-shadow: inset 0 0 15px #000;
     }
 
-    /* Estilo dos Sliders e Botões */
-    .stSlider label { color: #888 !important; font-size: 0.7em !important; }
-    .stButton>button {
-        background: #222 !important;
-        border: 1px solid #444 !important;
-        color: #ddd !important;
-        width: 100%;
+    /* Botões LED (Play/Cue) */
+    .dj-btn {
+        padding: 15px !important;
+        font-weight: bold !important;
+        border-radius: 50% !important; /* Botões redondos na imagem */
+        width: 70px !important;
+        height: 70px !important;
+        border: 2px solid #3a3a3e !important;
+        background: #1e1e21 !important;
+        transition: 0.2s !important;
     }
+    
+    .stButton>button:hover {
+        border-color: #00f2ff !important;
+        color: #00f2ff !important;
+        box-shadow: 0 0 20px rgba(0, 242, 255, 0.4) !important;
+    }
+
+    /* Esconder labels dos sliders para assemelhar a faders */
+    .stSlider label { display: none; }
 </style>
 """, unsafe_allow_html=True)
 
-# --- CONTEÚDO DA PLACA ÚNICA ---
+# --- ESTRUTURA DA APP ---
 
-# Abre a "Placa de Metal"
-st.markdown('<div class="metal-chassis">', unsafe_allow_html=True)
+st.markdown('<div class="dj-system-unibody">', unsafe_allow_html=True)
 
-# 1. NAVEGADOR SOUNDCLOUD (Lado Esquerdo da Placa)
+# 1. PAINEL SUPERIOR (Displays e Navegação)
+col_nav_L, col_center_display, col_nav_R = st.columns([1, 2, 1])
+
+with col_nav_L:
+    st.markdown("""<div class="lcd-screen" style="height: 100px;">
+        <small>BROWSER</small><br><b>SOUNDCLOUD ACTIVE</b>
+    </div>""", unsafe_allow_html=True)
+
+with col_center_display:
+    st.markdown("""<div class="lcd-screen" style="height: 100px; border-color: #ff4b4b33; color: #ff4b4b;">
+        <h2>GEMINI DIGITAL DJ DECK</h2>
+        <small>MASTER OUTPUT: -3.2dB | BPM: 128.0</small>
+    </div>""", unsafe_allow_html=True)
+
+with col_nav_R:
+    st.markdown("""<div class="lcd-screen" style="height: 100px;">
+        <small>EFFECTS</small><br><b>REVERB: OFF</b>
+    </div>""", unsafe_allow_html=True)
+
+# 2. ÁREA DE PERFORMANCE PRINCIPAL
+st.markdown('<div class="performance-deck">', unsafe_allow_html=True)
+
+# --- DECK A (ESQUERDO) ---
 with st.container():
-    st.markdown('<div class="embedded-browser">', unsafe_allow_html=True)
-    st.markdown("### ☁️ SoundCloud")
-    search = st.text_input("Search World Music", placeholder="Artist, track...", label_visibility="collapsed")
-    st.markdown("---")
-    st.caption("BROWSE")
-    st.write("🔥 Trending Charts")
-    st.write("🌍 Global Top 50")
-    st.write("🎧 Deep House")
-    st.write("🎹 Techno Mix")
-    if search:
-        st.success(f"Result: {search} - Remix.mp3")
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="jog-outer"><div class="jog-inner-vinyl"><div class="jog-center-display"></div></div></div>', unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    c1, c2, c3 = st.columns(3)
+    c1.button("▶️", key="play_a")
+    c2.button("⏸️", key="cue_a")
+    c3.button("🔄", key="sync_a")
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.slider("Tempo A", -10.0, 10.0, 0.0, key="sl_a")
 
-# 2. ÁREA DE PERFORMANCE (Decks e Mixer)
+# --- MIXER CENTRAL ---
+st.markdown('<div class="mixer-strip">', unsafe_allow_html=True)
+st.caption("GAIN")
+st.slider("G", 0, 100, 75, key="m_g")
+st.markdown("---")
+st.caption("HIGH")
+st.slider("H", 0, 100, 50, key="m_h")
+st.caption("MID")
+st.slider("M", 0, 100, 50, key="m_m")
+st.caption("LOW")
+st.slider("L", 0, 100, 50, key="m_l")
+st.markdown("---")
+st.caption("FADER")
+st.slider("F", 0, 100, 80, key="m_f")
+st.markdown('</div>', unsafe_allow_html=True)
+
+# --- DECK B (DIREITO) ---
 with st.container():
-    st.markdown('<div class="deck-area">', unsafe_allow_html=True)
+    st.markdown('<div class="jog-outer"><div class="jog-inner-vinyl" style="animation-duration: 4.5s;"><div class="jog-center-display" style="border-color: #ff4b4b; box-shadow: 0 0 15px #ff4b4b;"></div></div></div>', unsafe_allow_html=True)
+    st.markdown("<br>", unsafe_allow_html=True)
+    c4, c5, c6 = st.columns(3)
+    c4.button("▶️", key="play_b")
+    c5.button("⏸️", key="cue_b")
+    c6.button("🔄", key="sync_b")
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.slider("Tempo B", -10.0, 10.0, 0.0, key="sl_b")
 
-    # --- DECK A (Esquerdo) ---
-    with st.container():
-        st.markdown('<div class="digital-display">TRACK A: READY<br>126.0 BPM</div>', unsafe_allow_html=True)
-        st.markdown('<div class="jog-wheel"><div class="jog-center"></div></div>', unsafe_allow_html=True)
-        c1, c2 = st.columns(2)
-        c1.button("PLAY", key="a_p")
-        c2.button("CUE", key="a_c")
-        st.slider("PITCH", -10.0, 10.0, 0.0, key="a_pitch")
+st.markdown('</div>', unsafe_allow_html=True) # Fim da Performance Deck
 
-    # --- MIXER (Centro) ---
-    st.markdown('<div class="integrated-mixer">', unsafe_allow_html=True)
-    st.caption("GAIN")
-    st.slider("G", 0, 100, 80, key="mix_g", label_visibility="collapsed")
-    st.markdown("---")
-    st.caption("HIGH")
-    st.slider("H", 0, 100, 50, key="mix_h", label_visibility="collapsed")
-    st.caption("MID")
-    st.slider("M", 0, 100, 50, key="mix_m", label_visibility="collapsed")
-    st.caption("LOW")
-    st.slider("L", 0, 100, 50, key="mix_l", label_visibility="collapsed")
-    st.markdown("---")
-    st.caption("CROSS")
-    st.slider("X", -100, 100, 0, key="mix_x", label_visibility="collapsed")
-    st.markdown('</div>', unsafe_allow_html=True)
+# 3. NAVEGADOR SOUNDCLOUD (Embutido no fundo da placa)
+st.markdown("---")
+st.markdown("### 🔍 SoundCloud Integrated Library")
+st.text_input("Search tracks worldwide...", placeholder="Type artist or song name...")
+st.markdown("""
+<div style="display: flex; gap: 10px; overflow-x: auto; padding: 10px;">
+    <div style="min-width: 200px; background: #000; padding: 10px; border-radius: 5px; border-left: 3px solid #00f2ff;">🎵 Tech House 2024</div>
+    <div style="min-width: 200px; background: #000; padding: 10px; border-radius: 5px; border-left: 3px solid #ff4b4b;">🎵 Techno Bunker</div>
+    <div style="min-width: 200px; background: #000; padding: 10px; border-radius: 5px; border-left: 3px solid #00f2ff;">🎵 Deep Vibes</div>
+</div>
+""", unsafe_allow_html=True)
 
-    # --- DECK B (Direito) ---
-    with st.container():
-        st.markdown('<div class="digital-display" style="color:#ff2d55; border-color:#ff2d5555;">TRACK B: SYNCED<br>126.0 BPM</div>', unsafe_allow_html=True)
-        st.markdown('<div class="jog-wheel" style="animation-duration: 3s;"><div class="jog-center" style="border-color:#ff2d55; box-shadow:0 0 15px #ff2d55;"></div></div>', unsafe_allow_html=True)
-        c3, c4 = st.columns(2)
-        c3.button("PLAY", key="b_p")
-        c4.button("CUE", key="b_c")
-        st.slider("PITCH", -10.0, 10.0, 0.0, key="b_pitch")
-
-    st.markdown('</div>', unsafe_allow_html=True)
-
-st.markdown('</div>', unsafe_allow_html=True) # Fecha a Placa de Metal
+st.markdown('</div>', unsafe_allow_html=True) # Fim do Unibody Chassis
