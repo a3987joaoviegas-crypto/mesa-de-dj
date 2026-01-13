@@ -1,148 +1,159 @@
 import streamlit as st
 
-st.set_page_config(layout="wide", page_title="Hardware DJ Console")
+st.set_page_config(layout="wide", page_title="Hardware DJ Unibody")
 
-# --- CSS DE MONTAGEM INDUSTRIAL (TUDO NUMA CHAPA SÓ) ---
+# --- O DESIGN DO HARDWARE MACIÇO (TUDO JUNTO) ---
 st.markdown("""
 <style>
-    .stApp { background-color: #0e0e10; }
+    .stApp { background-color: #050505; }
 
-    /* A CONSOLA ÚNICA (SEM ESPAÇOS) */
-    .dj-console-body {
+    /* A PLACA DE METAL MACIÇA (CHASSIS ÚNICO) */
+    .dj-hardware-body {
         background: linear-gradient(180deg, #1a1a1c 0%, #0a0a0b 100%);
-        width: 1100px;
-        height: 520px;
-        margin: 40px auto;
-        border-radius: 10px;
-        border: 4px solid #2a2a2e;
-        box-shadow: 0 60px 100px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.1);
-        
-        /* O segredo: Um grid que junta Deck A | Mixer | Deck B sem folgas */
+        width: 1000px;
+        height: 480px;
+        margin: 50px auto;
+        border-radius: 8px;
+        border: 2px solid #2a2a2e;
+        position: relative; /* Para permitir posicionar botões colados ao disco */
+        box-shadow: 0 40px 80px rgba(0,0,0,0.9), inset 0 1px 1px rgba(255,255,255,0.1);
         display: grid;
-        grid-template-columns: 1fr 220px 1fr;
-        padding: 0;
+        grid-template-columns: 1fr 200px 1fr;
         overflow: hidden;
     }
 
-    /* Zonas da Placa */
-    .deck-plate {
+    /* Textura de metal escovado para a placa toda */
+    .dj-hardware-body::before {
+        content: "";
+        position: absolute;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background: repeating-linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.01) 1%, transparent 2%);
+        pointer-events: none;
+    }
+
+    /* DECK SECTION (Ocupa o lado sem divisões) */
+    .deck-section {
+        position: relative;
         padding: 20px;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: space-between;
+    }
+
+    /* O DISCO DE VINIL (Tamanho grande e centralizado no deck) */
+    @keyframes spin_vinyl { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    
+    .jog-wheel {
+        width: 290px;
+        height: 290px;
+        border-radius: 50%;
+        background: radial-gradient(circle, #222 10%, #000 100%);
+        border: 10px solid #161618;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.5), inset 0 0 15px #000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        animation: spin_vinyl 4s linear infinite;
         position: relative;
     }
 
-    .mixer-plate {
-        background: rgba(0,0,0,0.3);
-        border-left: 2px solid #222;
-        border-right: 2px solid #222;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 20px 0;
-        justify-content: space-around;
-    }
-
-    /* O DISCO DE VINIL (Encostado aos botões) */
-    @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-    
-    .jog-wheel {
-        width: 320px;
-        height: 320px;
-        border-radius: 50%;
-        background: radial-gradient(circle, #111 10%, #050505 100%);
-        border: 8px solid #1a1a1c;
-        box-shadow: inset 0 0 15px #000, 0 5px 15px rgba(0,0,0,0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        animation: spin 4s linear infinite;
-        margin-bottom: 20px;
-    }
-
-    .vinyl-texture {
-        width: 98%; height: 98%; border-radius: 50%;
-        background: repeating-radial-gradient(circle, #000 0, #000 1px, #0f0f0f 2px);
+    .vinyl-grooves {
+        width: 96%; height: 96%; border-radius: 50%;
+        background: repeating-radial-gradient(circle, #000 0, #000 1px, #0a0a0a 2px);
         display: flex; align-items: center; justify-content: center;
     }
 
-    .center-display {
-        width: 80px; height: 80px; background: #000;
+    .jog-center {
+        width: 65px; height: 65px; background: #000;
         border: 2px solid #00f2ff; border-radius: 50%;
-        box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+        box-shadow: 0 0 15px rgba(0, 242, 255, 0.4);
     }
 
-    /* BOTÕES E FADERS (Justapostos na placa) */
-    .button-row {
+    /* PAINEL DE BOTÕES (Colados à volta do disco) */
+    .button-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        width: 280px;
+        margin-top: 15px;
+    }
+
+    /* MIXER SECTION (Centralizado na mesma placa) */
+    .mixer-section {
+        background: rgba(0,0,0,0.4);
+        border-left: 1px solid #222;
+        border-right: 1px solid #222;
+        padding: 15px 10px;
         display: flex;
-        gap: 10px;
-        width: 100%;
-        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
     }
 
-    .hw-button {
-        width: 50px; height: 50px;
-        background: #222;
-        border: 1px solid #333;
-        border-radius: 4px;
-        box-shadow: 0 2px 0 #111;
-    }
+    /* Estilo dos Knobs e Faders */
+    .stSlider { margin-bottom: -15px !important; }
+    .stSlider label { color: #555 !important; font-size: 10px !important; }
 
-    /* Estilo dos Sliders do Mixer */
-    .stSlider { padding: 0px 20px; }
+    /* Estética de Hardware dos Botões */
+    .stButton>button {
+        width: 100% !important;
+        background: #1c1c1e !important;
+        border: 1px solid #333 !important;
+        color: #888 !important;
+        font-size: 10px !important;
+        height: 35px !important;
+        border-radius: 4px !important;
+    }
 </style>
 """, unsafe_allow_html=True)
 
-# --- CONSTRUÇÃO DO HARDWARE ---
+# --- MONTAGEM DA CONTROLADORA ---
 
-st.markdown('<div class="dj-console-body">', unsafe_allow_html=True)
+st.markdown('<div class="dj-hardware-body">', unsafe_allow_html=True)
 
-# 1. DECK ESQUERDO (Aparafusado na placa)
+# 1. DECK ESQUERDO
 with st.container():
-    st.markdown('<div class="deck-plate">', unsafe_allow_html=True)
-    st.markdown('<div style="color:#444; font-size:12px; font-weight:bold;">DECK A</div>', unsafe_allow_html=True)
-    st.markdown('<div class="jog-wheel"><div class="vinyl-texture"><div class="center-display"></div></div></div>', unsafe_allow_html=True)
-    
-    # Botões logo por baixo do disco (sem espaço)
-    st.markdown('<div class="button-row">', unsafe_allow_html=True)
+    st.markdown('<div class="deck-section">', unsafe_allow_html=True)
+    # Ecrã LCD do Deck
+    st.markdown('<div style="background:#000; color:#00f2ff; padding:5px; width:120px; text-align:center; font-family:monospace; font-size:10px; border:1px solid #333; margin-bottom:10px;">128.00 BPM</div>', unsafe_allow_html=True)
+    # Jog Wheel
+    st.markdown('<div class="jog-wheel"><div class="vinyl-grooves"><div class="jog-center"></div></div></div>', unsafe_allow_html=True)
+    # Botões colados por baixo
+    st.markdown('<div class="button-grid">', unsafe_allow_html=True)
     c1, c2, c3, c4 = st.columns(4)
-    c1.button("PLAY", key="a1")
-    c2.button("CUE", key="a2")
-    c3.button("LOOP", key="a3")
-    c4.button("SYNC", key="a4")
+    c1.button("PLAY", key="p1")
+    c2.button("CUE", key="c1")
+    c3.button("SYNC", key="s1")
+    c4.button("SHIFT", key="sh1")
     st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 2. MIXER (O coração da placa)
+# 2. MIXER CENTRAL (Embutido)
 with st.container():
-    st.markdown('<div class="mixer-plate">', unsafe_allow_html=True)
-    st.write("LEVEL")
-    st.slider("GAIN", 0, 100, 80, key="m_g", label_visibility="collapsed")
-    st.write("EQ")
-    st.slider("HI", 0, 100, 50, key="m_h", label_visibility="collapsed")
-    st.slider("MID", 0, 100, 50, key="m_m", label_visibility="collapsed")
-    st.slider("LOW", 0, 100, 50, key="m_l", label_visibility="collapsed")
-    st.write("CROSSFADER")
-    st.slider("X", -100, 100, 0, key="m_x", label_visibility="collapsed")
+    st.markdown('<div class="mixer-section">', unsafe_allow_html=True)
+    st.slider("GAIN", 0, 100, 70, key="m_g")
+    st.slider("HI", 0, 100, 50, key="m_h")
+    st.slider("MID", 0, 100, 50, key="m_m")
+    st.slider("LOW", 0, 100, 50, key="m_l")
+    st.markdown("<br>", unsafe_allow_html=True)
+    st.slider("CROSSFADER", -100, 100, 0, key="m_x")
     st.markdown('</div>', unsafe_allow_html=True)
 
-# 3. DECK DIREITO (Justaposto ao mixer)
+# 3. DECK DIREITO
 with st.container():
-    st.markdown('<div class="deck-plate">', unsafe_allow_html=True)
-    st.markdown('<div style="color:#444; font-size:12px; font-weight:bold;">DECK B</div>', unsafe_allow_html=True)
-    st.markdown('<div class="jog-wheel"><div class="vinyl-texture"><div class="center-display" style="border-color:#ff2d55; box-shadow: 0 0 20px rgba(255, 45, 85, 0.4);"></div></div></div>', unsafe_allow_html=True)
-    
-    st.markdown('<div class="button-row">', unsafe_allow_html=True)
+    st.markdown('<div class="deck-section">', unsafe_allow_html=True)
+    # Ecrã LCD do Deck B
+    st.markdown('<div style="background:#000; color:#ff4b4b; padding:5px; width:120px; text-align:center; font-family:monospace; font-size:10px; border:1px solid #333; margin-bottom:10px;">128.00 BPM</div>', unsafe_allow_html=True)
+    # Jog Wheel
+    st.markdown('<div class="jog-wheel"><div class="vinyl-grooves"><div class="jog-center" style="border-color:#ff4b4b; box-shadow:0 0 15px #ff4b4b66;"></div></div></div>', unsafe_allow_html=True)
+    # Botões colados por baixo
+    st.markdown('<div class="button-grid">', unsafe_allow_html=True)
     c5, c6, c7, c8 = st.columns(4)
-    c5.button("PLAY", key="b1")
-    c6.button("CUE", key="b2")
-    c7.button("LOOP", key="b3")
-    c8.button("SYNC", key="b4")
+    c5.button("PLAY", key="p2")
+    c6.button("CUE", key="c2")
+    c7.button("SYNC", key="s2")
+    c8.button("SHIFT", key="sh2")
     st.markdown('</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 st.markdown('</div>', unsafe_allow_html=True)
-
-st.markdown("<p style='text-align:center; color:#333;'>Pressione Play para ativar a rotação física</p>", unsafe_allow_html=True)
