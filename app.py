@@ -1,132 +1,142 @@
 import streamlit as st
 
-st.set_page_config(layout="wide", page_title="REAL DJ HARDWARE")
+st.set_page_config(layout="wide", page_title="Gemini Ultra-Realistic Console")
 
-# --- O CÓDIGO DA PLACA DE METAL MACIÇA ---
+# --- CSS DE ALTA PRECISÃO (HARDWARE PURO) ---
 st.markdown("""
 <style>
-    /* Limpar tudo o que é "site" e deixar só o "objeto" */
-    header, footer, .stSidebar {display: none;}
-    .stApp { background-color: #050505; display: flex; align-items: center; justify-content: center; height: 100vh; }
+    /* Esconde elementos desnecessários */
+    header, footer {visibility: hidden;}
+    .stApp { background-color: #0b0b0d; display: flex; align-items: center; justify-content: center; }
 
-    /* A PEÇA DE METAL ÚNICA (UNIBODY) */
-    .dj-hardware-block {
-        background: linear-gradient(180deg, #151517 0%, #080809 100%);
-        width: 1100px;
-        height: 520px;
-        border-radius: 10px;
-        border: 2px solid #222;
-        box-shadow: 0 80px 150px rgba(0,0,0,1), inset 0 1px 1px rgba(255,255,255,0.05);
-        display: grid;
-        grid-template-columns: 1fr 220px 1fr;
+    /* A PLACA ÚNICA (O CHASSIS DE METAL) */
+    .dj-unibody {
+        background: linear-gradient(145deg, #1e1e21, #080809);
+        width: 1050px;
+        height: 500px;
+        border: 3px solid #2a2a2e;
+        border-radius: 15px;
         position: relative;
-        padding: 20px;
+        box-shadow: 0 50px 100px rgba(0,0,0,1), inset 0 1px 2px rgba(255,255,255,0.05);
+        display: flex;
+        justify-content: space-between;
+        padding: 40px;
         overflow: hidden;
     }
 
-    /* Textura de Alumínio Escovado em toda a placa */
-    .dj-hardware-block::before {
+    /* Textura de Metal Escovado Integrada */
+    .dj-unibody::after {
         content: "";
         position: absolute; top: 0; left: 0; right: 0; bottom: 0;
         background: repeating-linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.01) 1%, transparent 2%);
         pointer-events: none;
     }
 
-    /* DISCO DE VINIL (Encastrado no Metal) */
+    /* O DISCO DE VINIL (Encastrado) */
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     
     .jog-hole {
-        width: 330px; height: 330px;
+        width: 320px; height: 320px;
         background: #000; border-radius: 50%;
-        box-shadow: inset 0 0 20px #000, 0 2px 4px rgba(255,255,255,0.05);
         display: flex; align-items: center; justify-content: center;
-        margin-top: 20px;
+        box-shadow: inset 0 0 25px #000;
+        position: relative;
     }
 
-    .vinyl-disc {
-        width: 96%; height: 96%; border-radius: 50%;
+    .vinyl-plate {
+        width: 95%; height: 95%; border-radius: 50%;
         background: 
-            repeating-radial-gradient(circle, #080808 0, #080808 1px, #111 2px),
+            repeating-radial-gradient(circle, #0a0a0a 0, #0a0a0a 1px, #111 2px),
             conic-gradient(from 0deg, transparent, rgba(255,255,255,0.03) 25%, transparent 50%);
-        animation: spin 3s linear infinite;
+        animation: spin 4s linear infinite;
         display: flex; align-items: center; justify-content: center;
     }
 
-    /* BOTÕES QUADRADOS DE PERFORMANCE (Logo abaixo do disco) */
-    .pad-container {
-        display: grid; grid-template-columns: repeat(4, 1fr);
-        gap: 8px; width: 300px; margin-top: 15px;
+    .led-center {
+        width: 70px; height: 70px; background: #000;
+        border: 2px solid #00f2ff; border-radius: 50%;
+        box-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
     }
 
-    .dj-pad {
-        height: 40px; background: #1a1a1c; border: 1px solid #333;
-        border-radius: 4px; box-shadow: 0 2px 0 #000;
+    /* MIXER CENTRAL (Sem texto, apenas os faders) */
+    .mixer-core {
+        width: 180px;
+        height: 100%;
+        background: rgba(0,0,0,0.2);
+        border-left: 1px solid #222;
+        border-right: 1px solid #222;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
     }
 
-    /* MIXER CENTRAL (Parte da mesma chapa) */
-    .mixer-center {
-        background: rgba(0,0,0,0.3);
-        border-left: 1px solid #1a1a1c; border-right: 1px solid #1a1a1c;
-        display: flex; flex-direction: column; align-items: center;
-        padding: 10px; justify-content: space-around;
+    /* Simuladores de Botões e Sliders na Placa */
+    .fake-fader {
+        width: 4px; height: 120px; background: #111; border-radius: 2px; position: relative;
+    }
+    .fake-fader::after {
+        content: ""; position: absolute; top: 30%; left: -10px;
+        width: 24px; height: 12px; background: #333; border: 1px solid #444; border-radius: 2px;
     }
 
-    /* Ecrã de Informação embutido no centro superior */
-    .central-lcd {
-        position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
-        width: 180px; height: 100px; background: #000;
-        border: 1px solid #222; border-radius: 4px;
-        color: #00f2ff; font-family: monospace; font-size: 11px;
-        display: flex; flex-direction: column; align-items: center; justify-content: center;
-        box-shadow: inset 0 0 10px rgba(0,242,255,0.1);
+    .pad-row {
+        display: flex; gap: 8px; margin-top: 20px;
+    }
+    .hw-pad {
+        width: 50px; height: 35px; background: #1a1a1c; border: 1px solid #333; border-radius: 3px;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- ESTRUTURA FÍSICA ---
+# --- CONSTRUÇÃO VISUAL ---
 
-st.markdown(f"""
-<div class="dj-hardware-block">
-    <div class="central-lcd">
-        <div>MASTER OUT</div>
-        <div style="font-size: 18px; margin: 5px 0;">128.0</div>
-        <div style="color: #444;">BPM SYNC</div>
+st.markdown("""
+<div class="dj-unibody">
+    
+    <div style="display: flex; flex-direction: column; align-items: center;">
+        <div class="jog-hole">
+            <div class="vinyl-plate">
+                <div class="led-center"></div>
+            </div>
+        </div>
+        <div class="pad-row">
+            <div class="hw-pad" style="border-color: #00f2ff; box-shadow: 0 0 10px rgba(0,242,255,0.2);"></div>
+            <div class="hw-pad"></div>
+            <div class="hw-pad"></div>
+            <div class="hw-pad"></div>
+        </div>
+    </div>
+
+    <div class="mixer-core">
+        <div style="color: #444; font-size: 10px; font-family: sans-serif;">MASTER LEVEL</div>
+        <div class="fake-fader"></div>
+        <div style="display: flex; gap: 15px;">
+            <div class="fake-fader" style="height: 80px;"></div>
+            <div class="fake-fader" style="height: 80px;"></div>
+        </div>
+        <div style="width: 100px; height: 4px; background: #111; border-radius: 2px; position: relative; margin-top: 20px;">
+            <div style="position: absolute; left: 45%; top: -10px; width: 12px; height: 24px; background: #333; border: 1px solid #444;"></div>
+        </div>
     </div>
 
     <div style="display: flex; flex-direction: column; align-items: center;">
         <div class="jog-hole">
-            <div class="vinyl-disc">
-                <div style="width: 70px; height: 70px; background: #000; border: 2px solid #00f2ff; border-radius: 50%; box-shadow: 0 0 15px #00f2ff55;"></div>
+            <div class="vinyl-plate" style="animation-duration: 3s;">
+                <div class="led-center" style="border-color: #ff4b4b; box-shadow: 0 0 20px rgba(255,75,75,0.5);"></div>
             </div>
         </div>
-        <div class="pad-container">
-            <div class="dj-pad"></div><div class="dj-pad"></div>
-            <div class="dj-pad"></div><div class="dj-pad"></div>
+        <div class="pad-row">
+            <div class="hw-pad" style="border-color: #ff4b4b; box-shadow: 0 0 10px rgba(255,75,75,0.2);"></div>
+            <div class="hw-pad"></div>
+            <div class="hw-pad"></div>
+            <div class="hw-pad"></div>
         </div>
     </div>
 
-    <div class="mixer-center">
-        <div style="margin-top: 100px; width: 100%;">
-            </div>
-    </div>
-
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <div class="jog-hole">
-            <div class="vinyl-disc" style="animation-duration: 4s;">
-                <div style="width: 70px; height: 70px; background: #000; border: 2px solid #ff4b4b; border-radius: 50%; box-shadow: 0 0 15px #ff4b4b55;"></div>
-            </div>
-        </div>
-        <div class="pad-container">
-            <div class="dj-pad"></div><div class="dj-pad"></div>
-            <div class="dj-pad"></div><div class="dj-pad"></div>
-        </div>
-    </div>
 </div>
 """, unsafe_allow_html=True)
 
-# Injetar os controlos Python no "buraco" do Mixer
-with st.sidebar: # Usamos a sidebar apenas para organizar os inputs, mas eles podiam estar invisíveis
-    st.write("Controlos Internos")
-
-# Para que os sliders apareçam "dentro" do mixer na placa:
-st.markdown('<style>.stSlider {margin-top: -30px !important;}</style>', unsafe_allow_html=True)
+st.markdown("<p style='text-align:center; color:#333; font-family:sans-serif;'>HARDWARE UNIBODY - SEM INTERFERÊNCIA DE CÓDIGO EXTERNO</p>", unsafe_allow_html=True)
