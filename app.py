@@ -1,50 +1,51 @@
 import streamlit as st
 
-st.set_page_config(layout="wide", page_title="Gemini Ultra-Realistic Console")
+# Configuração para limpar a página
+st.set_page_config(layout="wide", page_title="DJ Unibody Hardware")
 
-# --- CSS DE ALTA PRECISÃO (HARDWARE PURO) ---
+# CSS para esconder o "lixo" do sistema e desenhar a placa
 st.markdown("""
 <style>
-    /* Esconde elementos desnecessários */
-    header, footer {visibility: hidden;}
-    .stApp { background-color: #0b0b0d; display: flex; align-items: center; justify-content: center; }
+    /* Esconde menus do Streamlit */
+    header, footer, #MainMenu {visibility: hidden;}
+    .stApp { background-color: #08080a; display: flex; align-items: center; justify-content: center; }
 
-    /* A PLACA ÚNICA (O CHASSIS DE METAL) */
-    .dj-unibody {
-        background: linear-gradient(145deg, #1e1e21, #080809);
-        width: 1050px;
+    /* O CHASSIS DE METAL (PEÇA ÚNICA) */
+    .dj-console {
+        background: linear-gradient(180deg, #1a1a1c 0%, #050505 100%);
+        width: 1080px;
         height: 500px;
-        border: 3px solid #2a2a2e;
-        border-radius: 15px;
+        border-radius: 12px;
+        border: 2px solid #2a2a2e;
         position: relative;
-        box-shadow: 0 50px 100px rgba(0,0,0,1), inset 0 1px 2px rgba(255,255,255,0.05);
-        display: flex;
-        justify-content: space-between;
-        padding: 40px;
+        box-shadow: 0 100px 150px rgba(0,0,0,1), inset 0 1px 1px rgba(255,255,255,0.05);
+        display: grid;
+        grid-template-columns: 1fr 200px 1fr; /* Deck | Mixer | Deck */
         overflow: hidden;
     }
 
-    /* Textura de Metal Escovado Integrada */
-    .dj-unibody::after {
-        content: "";
-        position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-        background: repeating-linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.01) 1%, transparent 2%);
-        pointer-events: none;
+    /* Secção de Hardware */
+    .section {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
     }
 
-    /* O DISCO DE VINIL (Encastrado) */
+    /* O DISCO DE VINIL (FÍSICO) */
     @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
     
-    .jog-hole {
-        width: 320px; height: 320px;
+    .jog-container {
+        width: 330px; height: 330px;
         background: #000; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
-        box-shadow: inset 0 0 25px #000;
-        position: relative;
+        box-shadow: inset 0 0 30px #000, 0 5px 15px rgba(0,0,0,0.5);
     }
 
-    .vinyl-plate {
-        width: 95%; height: 95%; border-radius: 50%;
+    .vinyl-record {
+        width: 96%; height: 96%; border-radius: 50%;
         background: 
             repeating-radial-gradient(circle, #0a0a0a 0, #0a0a0a 1px, #111 2px),
             conic-gradient(from 0deg, transparent, rgba(255,255,255,0.03) 25%, transparent 50%);
@@ -53,90 +54,87 @@ st.markdown("""
     }
 
     .led-center {
-        width: 70px; height: 70px; background: #000;
+        width: 75px; height: 75px; background: #000;
         border: 2px solid #00f2ff; border-radius: 50%;
         box-shadow: 0 0 20px rgba(0, 242, 255, 0.5);
     }
 
-    /* MIXER CENTRAL (Sem texto, apenas os faders) */
-    .mixer-core {
-        width: 180px;
-        height: 100%;
-        background: rgba(0,0,0,0.2);
-        border-left: 1px solid #222;
-        border-right: 1px solid #222;
+    /* MIXER CENTRAL (Embutido no metal) */
+    .mixer-plate {
+        background: rgba(0,0,0,0.3);
+        border-left: 2px solid #1a1a1c;
+        border-right: 2px solid #1a1a1c;
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: center;
-        gap: 20px;
+        padding: 20px 0;
+        justify-content: space-around;
     }
 
-    /* Simuladores de Botões e Sliders na Placa */
-    .fake-fader {
-        width: 4px; height: 120px; background: #111; border-radius: 2px; position: relative;
+    /* BOTÕES E FADERS (Desenhos sem código) */
+    .button-pad {
+        width: 50px; height: 35px; background: #1a1a1c; 
+        border: 1px solid #333; border-radius: 4px;
+        margin: 5px; box-shadow: 0 2px 0 #000;
     }
-    .fake-fader::after {
-        content: ""; position: absolute; top: 30%; left: -10px;
-        width: 24px; height: 12px; background: #333; border: 1px solid #444; border-radius: 2px;
+    
+    .fader-slot {
+        width: 6px; height: 100px; background: #000; 
+        border-radius: 3px; position: relative;
     }
-
-    .pad-row {
-        display: flex; gap: 8px; margin-top: 20px;
-    }
-    .hw-pad {
-        width: 50px; height: 35px; background: #1a1a1c; border: 1px solid #333; border-radius: 3px;
-        box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+    .fader-knob {
+        width: 26px; height: 14px; background: #333; 
+        border: 1px solid #444; position: absolute; 
+        top: 40%; left: -10px; border-radius: 2px;
     }
 </style>
 """, unsafe_allow_html=True)
 
-# --- CONSTRUÇÃO VISUAL ---
-
+# --- O HARDWARE FINAL (LITERALMENTE JUNTO) ---
 st.markdown("""
-<div class="dj-unibody">
+<div class="dj-console">
     
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <div class="jog-hole">
-            <div class="vinyl-plate">
+    <div class="section">
+        <div style="color: #444; font-size: 10px; margin-bottom: 10px;">DECK A</div>
+        <div class="jog-container">
+            <div class="vinyl-record">
                 <div class="led-center"></div>
             </div>
         </div>
-        <div class="pad-row">
-            <div class="hw-pad" style="border-color: #00f2ff; box-shadow: 0 0 10px rgba(0,242,255,0.2);"></div>
-            <div class="hw-pad"></div>
-            <div class="hw-pad"></div>
-            <div class="hw-pad"></div>
+        <div style="display: flex; margin-top: 20px;">
+            <div class="button-pad" style="border-color: #00f2ff;"></div>
+            <div class="button-pad"></div>
+            <div class="button-pad"></div>
+            <div class="button-pad"></div>
         </div>
     </div>
 
-    <div class="mixer-core">
-        <div style="color: #444; font-size: 10px; font-family: sans-serif;">MASTER LEVEL</div>
-        <div class="fake-fader"></div>
-        <div style="display: flex; gap: 15px;">
-            <div class="fake-fader" style="height: 80px;"></div>
-            <div class="fake-fader" style="height: 80px;"></div>
+    <div class="mixer-plate">
+        <div style="color: #444; font-size: 10px;">MIXER</div>
+        <div class="fader-slot"><div class="fader-knob"></div></div>
+        <div style="display: flex; gap: 20px;">
+             <div class="fader-slot" style="height: 60px;"></div>
+             <div class="fader-slot" style="height: 60px;"></div>
         </div>
-        <div style="width: 100px; height: 4px; background: #111; border-radius: 2px; position: relative; margin-top: 20px;">
-            <div style="position: absolute; left: 45%; top: -10px; width: 12px; height: 24px; background: #333; border: 1px solid #444;"></div>
+        <div style="width: 120px; height: 6px; background: #000; position: relative;">
+            <div style="width: 14px; height: 26px; background: #333; position: absolute; left: 45%; top: -10px;"></div>
         </div>
     </div>
 
-    <div style="display: flex; flex-direction: column; align-items: center;">
-        <div class="jog-hole">
-            <div class="vinyl-plate" style="animation-duration: 3s;">
+    <div class="section">
+        <div style="color: #444; font-size: 10px; margin-bottom: 10px;">DECK B</div>
+        <div class="jog-container">
+            <div class="vinyl-record" style="animation-duration: 3s;">
                 <div class="led-center" style="border-color: #ff4b4b; box-shadow: 0 0 20px rgba(255,75,75,0.5);"></div>
             </div>
         </div>
-        <div class="pad-row">
-            <div class="hw-pad" style="border-color: #ff4b4b; box-shadow: 0 0 10px rgba(255,75,75,0.2);"></div>
-            <div class="hw-pad"></div>
-            <div class="hw-pad"></div>
-            <div class="hw-pad"></div>
+        <div style="display: flex; margin-top: 20px;">
+            <div class="button-pad" style="border-color: #ff4b4b;"></div>
+            <div class="button-pad"></div>
+            <div class="button-pad"></div>
+            <div class="button-pad"></div>
         </div>
     </div>
 
 </div>
 """, unsafe_allow_html=True)
-
-st.markdown("<p style='text-align:center; color:#333; font-family:sans-serif;'>HARDWARE UNIBODY - SEM INTERFERÊNCIA DE CÓDIGO EXTERNO</p>", unsafe_allow_html=True)
