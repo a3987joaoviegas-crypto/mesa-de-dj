@@ -1,110 +1,113 @@
 import streamlit as st
 
-# Configuração Pro
-st.set_page_config(page_title="FL Streamlit Studio", layout="wide")
+# Configuração da Página
+st.set_page_config(layout="wide", page_title="Gemini Digital DJ Deck")
 
-# --- CSS DE ALTO REALISMO (ESTILO DAW) ---
+# CSS para Estilização "Ultra Realista" (Estilo FL Studio / Pioneer)
 st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap');
-    
-    .stApp { background-color: #1e1e1e; color: #dcdcdc; font-family: 'Roboto Mono', monospace; }
-    
-    /* Botões estilo FL Studio */
-    .stButton>button {
-        background: linear-gradient(145deg, #333, #222);
-        border: 1px solid #444;
-        color: #ff9000;
-        font-weight: bold;
-        border-radius: 4px;
-        box-shadow: 2px 2px 5px #111;
-        height: 40px;
+<style>
+    .main { background-color: #0e1117; }
+    .dj-container {
+        background: linear-gradient(145deg, #1a1a1b, #232325);
+        border-radius: 15px;
+        padding: 20px;
+        border: 2px solid #3e3e42;
+        box-shadow: 10px 10px 20px #050505;
     }
-    .stButton>button:active { background: #ff9000; color: black; }
-    
-    /* Painéis de Rack */
-    .rack-panel {
-        background-color: #2b2b2b;
-        border-left: 5px solid #ff9000;
-        padding: 15px;
+    .jog-wheel {
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: conic-gradient(#111, #333, #111, #333);
+        border: 8px solid #444;
+        margin: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 0 20px #000;
+    }
+    .lcd-screen {
+        background-color: #000;
+        color: #00ff00;
+        font-family: 'Courier New', monospace;
+        padding: 10px;
+        border: 2px solid #444;
+        text-align: center;
         border-radius: 5px;
         margin-bottom: 10px;
     }
+    .stSlider > div > div > div > div { background-color: #ff4b4b; }
+</style>
+""", unsafe_allow_html=True)
+
+# --- SIDEBAR: NAVEGADOR DE MÚSICA (Simulando Spotify/FL Browser) ---
+with st.sidebar:
+    st.title("📂 Music Browser")
+    search = st.text_input("🔍 Search Spotify Library...", placeholder="Artist, track, genre...")
     
-    /* Medidores de LED */
-    .vu-meter {
-        height: 10px;
-        background: linear-gradient(to right, green 60%, yellow 80%, red 100%);
-        border-radius: 2px;
-        margin-top: 5px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-# --- CABEÇALHO DA DAW ---
-col_logo, col_transport, col_cpu = st.columns([1, 2, 1])
-with col_logo:
-    st.markdown("<h2 style='color: #ff9000; margin:0;'>FL STUDIO <span style='font-size:12px; color:white;'>ST</span></h2>", unsafe_allow_html=True)
-with col_transport:
-    c1, c2, c3, c4 = st.columns(4)
-    c1.button("▶ PLAY")
-    c2.button("⏸ PAUSE")
-    c3.button("⏹ STOP")
-    c4.button("🔴 REC")
-
-st.divider()
-
-# --- ÁREA PRINCIPAL: STEP SEQUENCER & PLAYLIST ---
-col_left, col_right = st.columns([2, 1])
-
-with col_left:
-    st.markdown("### 🎛 CHANNEL RACK (Step Sequencer)")
+    st.markdown("### 🌎 Global Charts")
+    st.write("🎵 Top 50 - Global")
+    st.write("🎵 Techno Essentials")
+    st.write("🎵 Hip-Hop Strategy")
     
-    instruments = ["🥁 KICK", "💥 SNARE", "✨ HI-HAT", "🎸 BASS"]
-    for inst in instruments:
-        with st.container():
-            cols = st.columns([2, 8])
-            cols[0].write(f"**{inst}**")
-            # Simulação de passos (steps) do sequenciador
-            steps = cols[1].columns(8)
-            for i in range(8):
-                steps[i].checkbox("", key=f"{inst}_{i}")
-            st.markdown("<div class='vu-meter'></div>", unsafe_allow_html=True)
-
     st.markdown("---")
-    st.markdown("### 🎹 PIANO ROLL / SPOTIFY SELECTOR")
-    spotify_url = st.text_input("Drop Spotify Track URL here:", "https://open.spotify.com/track/4cOdK2wGvWyRJBUNRJVY0q")
-    if "track/" in spotify_url:
-        track_id = spotify_url.split("track/")[1].split("?")[0]
-        st.markdown(f'<iframe src="https://open.spotify.com/embed/track/{track_id}" width="100%" height="152" frameborder="0" allow="encrypted-media"></iframe>', unsafe_allow_html=True)
+    st.markdown("### 📂 Local Samples (FL Style)")
+    st.tree_select = st.selectbox("Packs", ["Kicks", "Snares", "Vocals", "Synths"])
 
-with col_right:
-    st.markdown("### 🎚️ MIXER")
-    st.markdown("<div style='background:#111; padding:10px; border-radius:10px;'>", unsafe_allow_html=True)
-    
-    m_col1, m_col2 = st.columns(2)
-    with m_col1:
-        st.slider("INS 1", 0, 100, 80, label_visibility="collapsed")
-        st.caption("MASTER")
-    with m_col2:
-        st.slider("INS 2", 0, 100, 50, label_visibility="collapsed")
-        st.caption("TRACK 1")
-    
-    st.markdown("</div>", unsafe_allow_html=True)
-    
-    st.markdown("### 📦 EFFECTS SLOT")
-    st.selectbox("Slot 1", ["None", "Fruity Reverb 2", "Fruity Limiter", "Gross Beat"])
-    st.selectbox("Slot 2", ["None", "Fruity Delay 3", "Soundgoodizer"])
-    
-    st.divider()
-    st.markdown("### 🕒 BROWSER")
-    st.caption("📁 Packs")
-    st.caption("📁 Project Bones")
-    st.caption("📁 Recorded")
+# --- ÁREA PRINCIPAL: A MESA DE DJ ---
+st.title("🎧 Gemini Command Center: DJ Edition")
 
-# --- RODAPÉ INFO ---
-st.sidebar.image("https://www.image-line.com/wp-content/uploads/2020/03/flstudio_logo_dark.png", width=100)
-st.sidebar.title("PROJECT INFO")
-st.sidebar.number_input("BPM", 10, 250, 128)
-st.sidebar.selectbox("Time Sig", ["4/4", "3/4", "6/8"])
-st.sidebar.slider("CPU Load", 0, 100, 12)
+col1, col_mid, col2 = st.columns([2, 1, 2])
+
+# DECK ESQUERDO (A)
+with col1:
+    st.markdown('<div class="dj-container">', unsafe_allow_html=True)
+    st.markdown('<div class="lcd-screen">TRACK A: NOT LOADED<br>BPM: 128.0</div>', unsafe_allow_html=True)
+    st.markdown('<div class="jog-wheel"></div>', unsafe_allow_html=True)
+    
+    st.markdown("###")
+    col_a1, col_a2 = st.columns(2)
+    with col_a1:
+        st.button("▶️ PLAY", key="play_a", use_container_width=True)
+    with col_a2:
+        st.button("⏸️ CUE", key="cue_a", use_container_width=True)
+    
+    st.slider("Pitch Control", 0.90, 1.10, 1.00, key="pitch_a")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# MIXER CENTRAL
+with col_mid:
+    st.markdown('<div style="text-align: center; padding-top: 50px;">', unsafe_allow_html=True)
+    st.markdown("🟢 **MASTER**")
+    st.slider("Gain", 0, 100, 75, label_visibility="collapsed")
+    st.markdown("---")
+    st.markdown("HI")
+    st.slider("High", 0, 100, 50, key="hi", label_visibility="collapsed")
+    st.markdown("MID")
+    st.slider("Mid", 0, 100, 50, key="mid", label_visibility="collapsed")
+    st.markdown("LOW")
+    st.slider("Low", 0, 100, 50, key="low", label_visibility="collapsed")
+    st.markdown("---")
+    st.markdown("**CROSSFADER**")
+    st.slider("", -100, 100, 0, key="crossfader", label_visibility="collapsed")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# DECK DIREITO (B)
+with col2:
+    st.markdown('<div class="dj-container">', unsafe_allow_html=True)
+    st.markdown('<div class="lcd-screen">TRACK B: SYNCED<br>BPM: 128.0</div>', unsafe_allow_html=True)
+    st.markdown('<div class="jog-wheel"></div>', unsafe_allow_html=True)
+    
+    st.markdown("###")
+    col_b1, col_b2 = st.columns(2)
+    with col_b1:
+        st.button("▶️ PLAY", key="play_b", use_container_width=True)
+    with col_b2:
+        st.button("⏸️ CUE", key="cue_b", use_container_width=True)
+    
+    st.slider("Pitch Control", 0.90, 1.10, 1.00, key="pitch_b")
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# --- WAVEFORM VISUALIZER (Simulado) ---
+st.markdown("### 📊 Waveform Monitor")
+st.progress(45) # Simula a posição da música
